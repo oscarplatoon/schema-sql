@@ -1,43 +1,59 @@
-users
--
-id PK int
-name string
-password string
-phone string
-email string
-service_plan_id
 
-serviceplan
--
-id PK int FK >- users.id
-plan string
-cost int
-promotion_id FK - promotion.id
 
-recipes
--
-id PK int FK - deliveries.recipe_id
-title string
+DROP TABLE IF EXISTS users CASCADE;
+create table users (
 
-recipe_ingredients
--
-id PK int
-recipe_id FK - recipes.id
-ingredients_id FK - ingredients.id
+id                serial Primary Key,
+name              varchar(255) NOT NULL,
+password          varchar(255) NOT NULL,
+phone             varchar(10) NOT NULL,
+email             varchar(100) NOT NULL,
+service_plan_id   integer
+);
 
-ingredients
--
-id PK int
-name string
+DROP TABLE IF EXISTS serviceplan CASCADE;
+create table serviceplan (
 
-promotion
--
-id PK int
-code string
-expiration_date date
+id              serial Primary Key references users.id,
+plan            varchar(255)
+cost            integer
+promotion_id    references promotion
+);
 
-deliveries
--
-id pk int
-recipe_id
-user_id FK - users.id
+DROP TABLE IF EXISTS recipes CASCADE;
+create table recipes(
+
+id      serial Primary Key references deliveries
+title   varchar(255) NOT NULL,
+);
+
+DROP TABLE IF EXISTS recipe_ingredients CASCADE;
+create table recipe_ingredients (
+
+id              serial Primary Key
+recipe_id       references recipes
+ingredients_id  references ingredients
+);
+
+DROP TABLE IF EXISTS ingredients CASCADE;
+create table ingredients (
+
+id        serial Primary Key
+name      varchar(255) NOT NULL,
+);
+
+DROP TABLE IF EXISTS promotion CASCADE;
+create table promotion(
+
+id                serial Primary Key
+code              varchar(255) NOT NULL,
+expiration_date   date NOT NULL
+);
+
+DROP TABLE IF EXISTS deliveries CASCADE;
+create table deliveries (
+
+id          serial Primary Key
+recipe_id   integer references recipes
+user_id     integer references users
+);
